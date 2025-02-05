@@ -1,35 +1,62 @@
 <!DOCTYPE html>
-<html lang="cn">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepSeek Chat</title>
+    <title>SiliconFlow API 示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
-    <h1>DeepSeek Chat</h1>
-    <input type="text" id="userInput" placeholder="Type your message here...">
-    <button onclick="sendMessage()">Send</button>
-    <div id="response"></div>
+    <h1>SiliconFlow API 示例</h1>
+    <input type="text" id="userInput" placeholder="请输入您的问题..." style="width: 300px; padding: 10px;">
+    <button onclick="sendRequest()">发送请求</button>
+    <div id="response">
+        <p>API 响应将显示在这里...</p>
+    </div>
 
     <script>
-        async function sendMessage() {
+        function sendRequest() {
             const userInput = document.getElementById('userInput').value;
-            const apiKey = 'YOUR_API_KEY'; // 替换为您的API密钥
-            const apiUrl = 'https://api.deepseek.com/v1/chat';
-
-            const response = await fetch(apiUrl, {
+            const options = {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'Authorization': 'Bearer sk-vwfrbiykvrvdywylzqsphacbblfiumjtztjyvacpicnddkvb',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: userInput
+                    model: "deepseek-ai/DeepSeek-V3",
+                    messages: [{role: "user", content: userInput}],
+                    stream: false,
+                    max_tokens: 512,
+                    temperature: 0.7,
+                    top_p: 0.7,
+                    top_k: 50,
+                    frequency_penalty: 0.5,
+                    n: 1,
+                    response_format: {type: "text"}
                 })
-            });
+            };
 
-            const data = await response.json();
-            document.getElementById('response').innerText = data.response;
+            fetch('https://api.siliconflow.cn/v1/chat/completions', options)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerHTML = `<p><strong>响应内容:</strong> ${data.choices[0].message.content}</p>`;
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    document.getElementById('response').innerHTML = `<p style="color: red;">请求失败，请检查控制台获取更多信息。</p>`;
+                });
         }
     </script>
 </body>
