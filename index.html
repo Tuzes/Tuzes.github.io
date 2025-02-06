@@ -48,7 +48,7 @@
                 })
             };
 
-            fetch('https://api.siliconflow.cn/v1/chat/completions', options)
+            fetch('http://api.siliconflow.cn/v1/chat/completions', options)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('response').innerHTML = `<p><strong>响应内容:</strong> ${data.choices[0].message.content}</p>`;
